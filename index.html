@@ -1,578 +1,717 @@
-import React from 'react';
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年1月日本旅行：消費數據分析報告</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-export default function JapanSpendingReport() {
-  const dailyData = [
-    { date: '01/15', amount: 326.5, label: '抵達日' },
-    { date: '01/16', amount: 2625.8, label: '最高峰' },
-    { date: '01/17', amount: 1532.6, label: '銀座日' },
-    { date: '01/18', amount: 228.3, label: '回程日' },
-  ];
+        body {
+            font-family: 'Noto Sans TC', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FFF0E6 50%, #F5F0FF 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
 
-  const topSpending = [
-    { name: 'スギ薬局グループ', nameEn: 'Sugi Pharmacy', amount: 1609.4, category: '藥妝購物', icon: '💊', color: '#FF6B9D' },
-    { name: 'うに虎中通り庵', nameEn: 'Uni-Tora', amount: 905.3, category: '餐飲 (海鮮)', icon: '🍣', color: '#FFB347' },
-    { name: '空野', nameEn: 'Sorano', amount: 478.3, category: '餐飲 (日式)', icon: '🍜', color: '#87CEEB' },
-  ];
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-  const locations = [
-    { name: '澀谷', icon: '🏙️' },
-    { name: '銀座', icon: '💎' },
-    { name: '池袋', icon: '🌸' },
-    { name: '木更津', icon: '🛍️' },
-  ];
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-  const maxAmount = Math.max(...dailyData.map(d => d.amount));
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #D4507A;
+            margin-bottom: 12px;
+        }
 
-  return (
-    <div style={{
-      fontFamily: '"Noto Sans TC", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif',
-      background: 'linear-gradient(135deg, #FFF5F5 0%, #FFF0E6 50%, #F5F0FF 100%)',
-      minHeight: '100vh',
-      padding: '40px 20px',
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-      }}>
-        {/* Header */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '40px',
-        }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '700',
-            color: '#D4507A',
-            margin: '0 0 12px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-          }}>
-            <span>🌸</span>
-            2026年1月日本旅行：消費數據分析報告
-            <span>🗾</span>
-          </h1>
-          <p style={{
-            fontSize: '1rem',
-            color: '#666',
-            margin: 0,
-            lineHeight: 1.6,
-          }}>
-            彙整並分析 2026 年 1 月 15 日至 18 日期間在日本境內的各項電子支付消費，展示消費分布、匯率趨勢及主要支出類別。
-          </p>
+        .header p {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Grid Layouts */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(212, 80, 122, 0.1);
+            border: 1px solid rgba(212, 80, 122, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            color: #D4507A;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 24px;
+        }
+
+        /* Daily Chart */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 220px;
+            padding: 20px 10px 0 10px;
+        }
+
+        .chart-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .chart-amount {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .chart-amount.highlight {
+            color: #D4507A;
+        }
+
+        .chart-bar {
+            width: 50px;
+            background: linear-gradient(180deg, #FFB6C1 0%, #FFA0B4 100%);
+            border-radius: 12px 12px 4px 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar.highlight {
+            background: linear-gradient(180deg, #FF6B9D 0%, #D4507A 100%);
+        }
+
+        .peak-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #D4507A;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .chart-date {
+            margin-top: 12px;
+            padding: 6px 12px;
+            background: #f8f8f8;
+            color: #666;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .chart-date.highlight {
+            background: #D4507A;
+            color: white;
+        }
+
+        .chart-label {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .chart-label.highlight {
+            color: #D4507A;
+            font-weight: 600;
+        }
+
+        /* Exchange Rate Card */
+        .exchange-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 28px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .exchange-card h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .exchange-rate {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .exchange-rate .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .exchange-rate .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .exchange-rate .unit {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .exchange-range {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .exchange-range p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .range-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .range-arrow {
+            font-size: 1.5rem;
+        }
+
+        .payment-method {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Top Spending */
+        .top-spending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .spending-item {
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spending-item.pink {
+            background: linear-gradient(135deg, rgba(255,107,157,0.1) 0%, rgba(255,107,157,0.03) 100%);
+            border: 2px solid rgba(255,107,157,0.2);
+        }
+
+        .spending-item.orange {
+            background: linear-gradient(135deg, rgba(255,179,71,0.1) 0%, rgba(255,179,71,0.03) 100%);
+            border: 2px solid rgba(255,179,71,0.2);
+        }
+
+        .spending-item.blue {
+            background: linear-gradient(135deg, rgba(135,206,235,0.15) 0%, rgba(135,206,235,0.05) 100%);
+            border: 2px solid rgba(135,206,235,0.3);
+        }
+
+        .spending-rank {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .spending-rank.pink { background: #FF6B9D; }
+        .spending-rank.orange { background: #FFB347; }
+        .spending-rank.blue { background: #87CEEB; }
+
+        .spending-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .spending-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .spending-name-en {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .spending-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spending-category {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .spending-category.pink { background: #FF6B9D; }
+        .spending-category.orange { background: #FFB347; }
+        .spending-category.blue { background: #87CEEB; }
+
+        .spending-amount {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .spending-amount.pink { color: #FF6B9D; }
+        .spending-amount.orange { color: #FFB347; }
+        .spending-amount.blue { color: #5BA3C0; }
+
+        /* Categories Card */
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-icon.pink {
+            background: linear-gradient(135deg, #FF6B9D 0%, #D4507A 100%);
+        }
+
+        .category-icon.orange {
+            background: linear-gradient(135deg, #FFB347 0%, #FF9500 100%);
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .category-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: #f5f5f5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Locations */
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .location-item {
+            background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .location-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background: linear-gradient(135deg, #D4507A 0%, #FF6B9D 100%);
+            border-radius: 20px;
+            padding: 28px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(212, 80, 122, 0.3);
+        }
+
+        .summary-card h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .summary-total {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .summary-total .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .summary-total .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .summary-total .sub {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .daily-avg {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .daily-avg .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .daily-avg .label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding: 20px;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .chart-container {
+                height: 180px;
+            }
+
+            .chart-bar {
+                width: 40px;
+            }
+
+            .exchange-rate .value {
+                font-size: 2rem;
+            }
+
+            .summary-total .value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌸 2026年1月日本旅行：消費數據分析報告 🗾</h1>
+            <p>彙整並分析 2026 年 1 月 15 日至 18 日期間在日本境內的各項電子支付消費，展示消費分布、匯率趨勢及主要支出類別。</p>
         </div>
 
-        {/* Main Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px',
-        }}>
-          {/* Daily Spending Chart */}
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '28px',
-            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
-            border: '1px solid rgba(212, 80, 122, 0.1)',
-          }}>
-            <h2 style={{
-              fontSize: '1.2rem',
-              color: '#D4507A',
-              margin: '0 0 8px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              📊 每日消費趨勢
-            </h2>
-            <p style={{
-              fontSize: '0.85rem',
-              color: '#999',
-              margin: '0 0 24px 0',
-            }}>
-              01/16 為單日消費最高峰，購入大量藥妝及百貨購物
-            </p>
-            
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'space-around',
-              height: '240px',
-              padding: '40px 10px 0 10px',
-            }}>
-              {dailyData.map((day, index) => (
-                <div key={index} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  flex: 1,
-                }}>
-                  <div style={{
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    color: day.date === '01/16' ? '#D4507A' : '#666',
-                    marginBottom: '8px',
-                  }}>
-                    ${day.amount.toLocaleString()}
-                  </div>
-                  <div style={{
-                    width: '50px',
-                    height: `${(day.amount / maxAmount) * 140}px`,
-                    background: day.date === '01/16' 
-                      ? 'linear-gradient(180deg, #FF6B9D 0%, #D4507A 100%)'
-                      : 'linear-gradient(180deg, #FFB6C1 0%, #FFA0B4 100%)',
-                    borderRadius: '12px 12px 4px 4px',
-                    position: 'relative',
-                    transition: 'all 0.3s ease',
-                  }}>
-                    {day.date === '01/16' && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '-8px',
-                        left: '50%',
-                        transform: 'translateX(-50%) translateY(-100%)',
-                        background: '#D4507A',
-                        color: 'white',
-                        padding: '4px 8px',
-                        borderRadius: '8px',
-                        fontSize: '0.7rem',
-                        fontWeight: '600',
-                        whiteSpace: 'nowrap',
-                        marginTop: '-25px',
-                      }}>
-                        🔥 最高峰
-                      </div>
-                    )}
-                  </div>
-                  <div style={{
-                    marginTop: '12px',
-                    padding: '6px 12px',
-                    background: day.date === '01/16' ? '#D4507A' : '#f8f8f8',
-                    color: day.date === '01/16' ? 'white' : '#666',
-                    borderRadius: '20px',
-                    fontSize: '0.85rem',
-                    fontWeight: '600',
-                  }}>
-                    {day.date}
-                  </div>
-                  <div style={{
-                    fontSize: '0.7rem',
-                    color: '#999',
-                    marginTop: '4px',
-                  }}>
-                    {day.label}
-                  </div>
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Daily Spending Chart -->
+            <div class="card">
+                <h2>📊 每日消費趨勢</h2>
+                <p class="card-subtitle">01/16 為單日消費最高峰，購入大量藥妝及百貨購物</p>
+                
+                <div class="chart-container">
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-amount">$326.5</div>
+                        <div class="chart-bar" style="height: 17px;"></div>
+                        <div class="chart-date">01/15</div>
+                        <div class="chart-label">抵達日</div>
+                    </div>
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-amount highlight">$2,625.8</div>
+                        <div class="chart-bar highlight" style="height: 140px;"></div>
+                        <div class="chart-date highlight">01/16</div>
+                        <div class="chart-label highlight">🔥 最高峰</div>
+                    </div>
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-amount">$1,532.6</div>
+                        <div class="chart-bar" style="height: 82px;"></div>
+                        <div class="chart-date">01/17</div>
+                        <div class="chart-label">銀座日</div>
+                    </div>
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-amount">$228.3</div>
+                        <div class="chart-bar" style="height: 12px;"></div>
+                        <div class="chart-date">01/18</div>
+                        <div class="chart-label">回程日</div>
+                    </div>
                 </div>
-              ))}
             </div>
-          </div>
 
-          {/* Exchange Rate Card */}
-          <div style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '20px',
-            padding: '28px',
-            color: 'white',
-            boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
-          }}>
-            <h2 style={{
-              fontSize: '1.2rem',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              💱 匯率走勢
-            </h2>
-            
-            <div style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: '8px',
-              marginBottom: '20px',
-            }}>
-              <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>平均匯率：</span>
-              <span style={{ fontSize: '2.5rem', fontWeight: '700' }}>4.937</span>
-              <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>(HKD/100 JPY)</span>
-            </div>
-            
-            <div style={{
-              background: 'rgba(255,255,255,0.15)',
-              borderRadius: '12px',
-              padding: '16px',
-            }}>
-              <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '8px' }}>
-                四天內匯率波動極小，幅圍介於：
-              </div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                }}>
-                  📉 4.916
-                </span>
-                <span style={{ fontSize: '1.5rem' }}>↔️</span>
-                <span style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                }}>
-                  📈 4.947
-                </span>
-              </div>
-            </div>
-            
-            <div style={{
-              marginTop: '16px',
-              fontSize: '0.8rem',
-              opacity: 0.8,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}>
-              <span>💳</span>
-              主要支付方式：八達通銀包 (PayPay)
-            </div>
-          </div>
-        </div>
-
-        {/* Top 3 Spending */}
-        <div style={{
-          background: 'white',
-          borderRadius: '20px',
-          padding: '28px',
-          boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
-          border: '1px solid rgba(212, 80, 122, 0.1)',
-          marginBottom: '32px',
-        }}>
-          <h2 style={{
-            fontSize: '1.2rem',
-            color: '#D4507A',
-            margin: '0 0 24px 0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}>
-            🏆 Top 3 單筆最高支出
-          </h2>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '20px',
-          }}>
-            {topSpending.map((item, index) => (
-              <div key={index} style={{
-                background: `linear-gradient(135deg, ${item.color}15 0%, ${item.color}08 100%)`,
-                borderRadius: '16px',
-                padding: '20px',
-                border: `2px solid ${item.color}30`,
-                position: 'relative',
-                overflow: 'hidden',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  background: item.color,
-                  color: 'white',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: '700',
-                  fontSize: '0.9rem',
-                }}>
-                  {index + 1}
+            <!-- Exchange Rate Card -->
+            <div class="exchange-card">
+                <h2>💱 匯率走勢</h2>
+                
+                <div class="exchange-rate">
+                    <span class="label">平均匯率：</span>
+                    <span class="value">4.937</span>
+                    <span class="unit">(HKD/100 JPY)</span>
                 </div>
                 
-                <div style={{
-                  fontSize: '2rem',
-                  marginBottom: '12px',
-                }}>
-                  {item.icon}
+                <div class="exchange-range">
+                    <p>四天內匯率波動極小，幅圍介於：</p>
+                    <div class="range-values">
+                        <span class="range-badge">📉 4.916</span>
+                        <span class="range-arrow">↔️</span>
+                        <span class="range-badge">📈 4.947</span>
+                    </div>
                 </div>
                 
-                <div style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '4px',
-                }}>
-                  {item.name}
+                <div class="payment-method">
+                    <span>💳</span>
+                    主要支付方式：八達通銀包 (PayPay)
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 3 Spending -->
+        <div class="card" style="margin-bottom: 32px;">
+            <h2>🏆 Top 3 單筆最高支出</h2>
+            
+            <div class="top-spending-grid" style="margin-top: 24px;">
+                <div class="spending-item pink">
+                    <div class="spending-rank pink">1</div>
+                    <div class="spending-icon">💊</div>
+                    <div class="spending-name">スギ薬局グループ</div>
+                    <div class="spending-name-en">Sugi Pharmacy</div>
+                    <div class="spending-footer">
+                        <span class="spending-category pink">藥妝購物</span>
+                        <span class="spending-amount pink">HKD $1,609.4</span>
+                    </div>
                 </div>
                 
-                <div style={{
-                  fontSize: '0.85rem',
-                  color: '#888',
-                  marginBottom: '12px',
-                }}>
-                  {item.nameEn}
+                <div class="spending-item orange">
+                    <div class="spending-rank orange">2</div>
+                    <div class="spending-icon">🍣</div>
+                    <div class="spending-name">うに虎中通り庵</div>
+                    <div class="spending-name-en">Uni-Tora</div>
+                    <div class="spending-footer">
+                        <span class="spending-category orange">餐飲 (海鮮)</span>
+                        <span class="spending-amount orange">HKD $905.3</span>
+                    </div>
                 </div>
                 
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                  <span style={{
-                    background: item.color,
-                    color: 'white',
-                    padding: '4px 12px',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    fontWeight: '500',
-                  }}>
-                    {item.category}
-                  </span>
-                  <span style={{
-                    fontSize: '1.3rem',
-                    fontWeight: '700',
-                    color: item.color,
-                  }}>
-                    HKD ${item.amount.toLocaleString()}
-                  </span>
+                <div class="spending-item blue">
+                    <div class="spending-rank blue">3</div>
+                    <div class="spending-icon">🍜</div>
+                    <div class="spending-name">空野</div>
+                    <div class="spending-name-en">Sorano</div>
+                    <div class="spending-footer">
+                        <span class="spending-category blue">餐飲 (日式)</span>
+                        <span class="spending-amount blue">HKD $478.3</span>
+                    </div>
                 </div>
-              </div>
-            ))}
-          </div>
+            </div>
         </div>
 
-        {/* Bottom Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '24px',
-        }}>
-          {/* Categories */}
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '28px',
-            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
-            border: '1px solid rgba(212, 80, 122, 0.1)',
-          }}>
-            <h2 style={{
-              fontSize: '1.2rem',
-              color: '#D4507A',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              📦 主要支出類別與重點商戶
-            </h2>
-            
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                marginBottom: '16px',
-              }}>
-                <span style={{
-                  fontSize: '1.5rem',
-                  background: 'linear-gradient(135deg, #FF6B9D 0%, #D4507A 100%)',
-                  borderRadius: '12px',
-                  width: '48px',
-                  height: '48px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  🛍️
-                </span>
-                <div>
-                  <div style={{ fontWeight: '600', color: '#333' }}>藥妝與百貨購物佔據支出大宗</div>
-                  <div style={{ fontSize: '0.85rem', color: '#888' }}>以藥妝、百貨購物為最大支出</div>
+        <!-- Bottom Grid -->
+        <div class="bottom-grid">
+            <!-- Categories -->
+            <div class="card">
+                <h2>📦 主要支出類別與重點商戶</h2>
+                
+                <div style="margin-top: 20px;">
+                    <div class="category-item">
+                        <span class="category-icon pink">🛍️</span>
+                        <div>
+                            <div class="category-title">藥妝與百貨購物佔據支出大宗</div>
+                            <div class="category-desc">以藥妝、百貨購物為最大支出</div>
+                        </div>
+                    </div>
+                    
+                    <div class="category-item">
+                        <span class="category-icon orange">🍽️</span>
+                        <div>
+                            <div class="category-title">多元化餐飲體驗</div>
+                            <div class="category-desc">包含高階餐飲與日常連鎖店的多元化餐飲</div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-              }}>
-                <span style={{
-                  fontSize: '1.5rem',
-                  background: 'linear-gradient(135deg, #FFB347 0%, #FF9500 100%)',
-                  borderRadius: '12px',
-                  width: '48px',
-                  height: '48px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  🍽️
-                </span>
-                <div>
-                  <div style={{ fontWeight: '600', color: '#333' }}>多元化餐飲體驗</div>
-                  <div style={{ fontSize: '0.85rem', color: '#888' }}>包含高階餐飲與日常連鎖店的多元化餐飲</div>
+                
+                <div class="tags">
+                    <span class="tag">百貨</span>
+                    <span class="tag">超市</span>
+                    <span class="tag">便利店</span>
+                    <span class="tag">藥局</span>
+                    <span class="tag">連鎖快餐</span>
                 </div>
-              </div>
             </div>
-            
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px',
-            }}>
-              {['百貨', '超市', '便利店', '藥局', '連鎖快餐'].map((tag, i) => (
-                <span key={i} style={{
-                  background: '#f5f5f5',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  color: '#666',
-                }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
 
-          {/* Locations */}
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '28px',
-            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
-            border: '1px solid rgba(212, 80, 122, 0.1)',
-          }}>
-            <h2 style={{
-              fontSize: '1.2rem',
-              color: '#D4507A',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              📍 跨區域消費足跡
-            </h2>
-            <p style={{
-              fontSize: '0.85rem',
-              color: '#888',
-              margin: '0 0 20px 0',
-            }}>
-              足跡遍及澀谷、銀座、池袋及木更津 Outlet
-            </p>
-            
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '12px',
-            }}>
-              {locations.map((loc, i) => (
-                <div key={i} style={{
-                  background: 'linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  transition: 'all 0.3s ease',
-                }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{loc.icon}</div>
-                  <div style={{ fontWeight: '600', color: '#333' }}>{loc.name}</div>
+            <!-- Locations -->
+            <div class="card">
+                <h2>📍 跨區域消費足跡</h2>
+                <p class="card-subtitle">足跡遍及澀谷、銀座、池袋及木更津 Outlet</p>
+                
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-icon">🏙️</div>
+                        <div class="location-name">澀谷</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-icon">💎</div>
+                        <div class="location-name">銀座</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-icon">🌸</div>
+                        <div class="location-name">池袋</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-icon">🛍️</div>
+                        <div class="location-name">木更津 Outlet</div>
+                    </div>
                 </div>
-              ))}
             </div>
-          </div>
 
-          {/* Total Summary */}
-          <div style={{
-            background: 'linear-gradient(135deg, #D4507A 0%, #FF6B9D 100%)',
-            borderRadius: '20px',
-            padding: '28px',
-            color: 'white',
-            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.3)',
-          }}>
-            <h2 style={{
-              fontSize: '1.2rem',
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              💰 消費總覽
-            </h2>
-            
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.15)',
-                borderRadius: '12px',
-                padding: '16px',
-              }}>
-                <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '4px' }}>總消費金額</div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700' }}>HKD $4,713</div>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>≈ ¥95,396 JPY</div>
-              </div>
-              
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '12px',
-              }}>
-                <div style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  textAlign: 'center',
-                }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>22</div>
-                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>交易筆數</div>
+            <!-- Summary -->
+            <div class="summary-card">
+                <h2>💰 消費總覽</h2>
+                
+                <div class="summary-total">
+                    <div class="label">總消費金額</div>
+                    <div class="value">HKD $4,713</div>
+                    <div class="sub">≈ ¥95,396 JPY</div>
                 </div>
-                <div style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  textAlign: 'center',
-                }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>4天</div>
-                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>旅行天數</div>
+                
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">22</div>
+                        <div class="stat-label">交易筆數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4天</div>
+                        <div class="stat-label">旅行天數</div>
+                    </div>
                 </div>
-              </div>
-              
-              <div style={{
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '10px',
-                padding: '12px',
-                textAlign: 'center',
-              }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: '700' }}>$1,178</div>
-                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>平均每日消費</div>
-              </div>
+                
+                <div class="daily-avg">
+                    <div class="value">$1,178</div>
+                    <div class="label">平均每日消費</div>
+                </div>
             </div>
-          </div>
         </div>
 
-        {/* Footer */}
-        <div style={{
-          textAlign: 'center',
-          marginTop: '32px',
-          padding: '20px',
-          color: '#999',
-          fontSize: '0.85rem',
-        }}>
-          <p style={{ margin: 0 }}>
-            🌸 資料來源：八達通銀包 PayPay 交易紀錄 | 製作日期：2026年1月 | 所有金額以港幣 (HKD) 顯示
-          </p>
+        <!-- Footer -->
+        <div class="footer">
+            <p>🌸 資料來源：八達通銀包 PayPay 交易紀錄 | 製作日期：2026年1月 | 所有金額以港幣 (HKD) 顯示</p>
         </div>
-      </div>
     </div>
-  );
-}
+</body>
+</html>
