@@ -1,0 +1,578 @@
+import React from 'react';
+
+export default function JapanSpendingReport() {
+  const dailyData = [
+    { date: '01/15', amount: 326.5, label: '抵達日' },
+    { date: '01/16', amount: 2625.8, label: '最高峰' },
+    { date: '01/17', amount: 1532.6, label: '銀座日' },
+    { date: '01/18', amount: 228.3, label: '回程日' },
+  ];
+
+  const topSpending = [
+    { name: 'スギ薬局グループ', nameEn: 'Sugi Pharmacy', amount: 1609.4, category: '藥妝購物', icon: '💊', color: '#FF6B9D' },
+    { name: 'うに虎中通り庵', nameEn: 'Uni-Tora', amount: 905.3, category: '餐飲 (海鮮)', icon: '🍣', color: '#FFB347' },
+    { name: '空野', nameEn: 'Sorano', amount: 478.3, category: '餐飲 (日式)', icon: '🍜', color: '#87CEEB' },
+  ];
+
+  const locations = [
+    { name: '澀谷', icon: '🏙️' },
+    { name: '銀座', icon: '💎' },
+    { name: '池袋', icon: '🌸' },
+    { name: '木更津', icon: '🛍️' },
+  ];
+
+  const maxAmount = Math.max(...dailyData.map(d => d.amount));
+
+  return (
+    <div style={{
+      fontFamily: '"Noto Sans TC", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif',
+      background: 'linear-gradient(135deg, #FFF5F5 0%, #FFF0E6 50%, #F5F0FF 100%)',
+      minHeight: '100vh',
+      padding: '40px 20px',
+    }}>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+      }}>
+        {/* Header */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '40px',
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            color: '#D4507A',
+            margin: '0 0 12px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+          }}>
+            <span>🌸</span>
+            2026年1月日本旅行：消費數據分析報告
+            <span>🗾</span>
+          </h1>
+          <p style={{
+            fontSize: '1rem',
+            color: '#666',
+            margin: 0,
+            lineHeight: 1.6,
+          }}>
+            彙整並分析 2026 年 1 月 15 日至 18 日期間在日本境內的各項電子支付消費，展示消費分布、匯率趨勢及主要支出類別。
+          </p>
+        </div>
+
+        {/* Main Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '24px',
+          marginBottom: '32px',
+        }}>
+          {/* Daily Spending Chart */}
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '28px',
+            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
+            border: '1px solid rgba(212, 80, 122, 0.1)',
+          }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              color: '#D4507A',
+              margin: '0 0 8px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              📊 每日消費趨勢
+            </h2>
+            <p style={{
+              fontSize: '0.85rem',
+              color: '#999',
+              margin: '0 0 24px 0',
+            }}>
+              01/16 為單日消費最高峰，購入大量藥妝及百貨購物
+            </p>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'space-around',
+              height: '240px',
+              padding: '40px 10px 0 10px',
+            }}>
+              {dailyData.map((day, index) => (
+                <div key={index} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  flex: 1,
+                }}>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: day.date === '01/16' ? '#D4507A' : '#666',
+                    marginBottom: '8px',
+                  }}>
+                    ${day.amount.toLocaleString()}
+                  </div>
+                  <div style={{
+                    width: '50px',
+                    height: `${(day.amount / maxAmount) * 140}px`,
+                    background: day.date === '01/16' 
+                      ? 'linear-gradient(180deg, #FF6B9D 0%, #D4507A 100%)'
+                      : 'linear-gradient(180deg, #FFB6C1 0%, #FFA0B4 100%)',
+                    borderRadius: '12px 12px 4px 4px',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                  }}>
+                    {day.date === '01/16' && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-8px',
+                        left: '50%',
+                        transform: 'translateX(-50%) translateY(-100%)',
+                        background: '#D4507A',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '8px',
+                        fontSize: '0.7rem',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap',
+                        marginTop: '-25px',
+                      }}>
+                        🔥 最高峰
+                      </div>
+                    )}
+                  </div>
+                  <div style={{
+                    marginTop: '12px',
+                    padding: '6px 12px',
+                    background: day.date === '01/16' ? '#D4507A' : '#f8f8f8',
+                    color: day.date === '01/16' ? 'white' : '#666',
+                    borderRadius: '20px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600',
+                  }}>
+                    {day.date}
+                  </div>
+                  <div style={{
+                    fontSize: '0.7rem',
+                    color: '#999',
+                    marginTop: '4px',
+                  }}>
+                    {day.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Exchange Rate Card */}
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '20px',
+            padding: '28px',
+            color: 'white',
+            boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
+          }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              💱 匯率走勢
+            </h2>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '8px',
+              marginBottom: '20px',
+            }}>
+              <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>平均匯率：</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: '700' }}>4.937</span>
+              <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>(HKD/100 JPY)</span>
+            </div>
+            
+            <div style={{
+              background: 'rgba(255,255,255,0.15)',
+              borderRadius: '12px',
+              padding: '16px',
+            }}>
+              <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '8px' }}>
+                四天內匯率波動極小，幅圍介於：
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+                <span style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                }}>
+                  📉 4.916
+                </span>
+                <span style={{ fontSize: '1.5rem' }}>↔️</span>
+                <span style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                }}>
+                  📈 4.947
+                </span>
+              </div>
+            </div>
+            
+            <div style={{
+              marginTop: '16px',
+              fontSize: '0.8rem',
+              opacity: 0.8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}>
+              <span>💳</span>
+              主要支付方式：八達通銀包 (PayPay)
+            </div>
+          </div>
+        </div>
+
+        {/* Top 3 Spending */}
+        <div style={{
+          background: 'white',
+          borderRadius: '20px',
+          padding: '28px',
+          boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
+          border: '1px solid rgba(212, 80, 122, 0.1)',
+          marginBottom: '32px',
+        }}>
+          <h2 style={{
+            fontSize: '1.2rem',
+            color: '#D4507A',
+            margin: '0 0 24px 0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            🏆 Top 3 單筆最高支出
+          </h2>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+          }}>
+            {topSpending.map((item, index) => (
+              <div key={index} style={{
+                background: `linear-gradient(135deg, ${item.color}15 0%, ${item.color}08 100%)`,
+                borderRadius: '16px',
+                padding: '20px',
+                border: `2px solid ${item.color}30`,
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  background: item.color,
+                  color: 'white',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                }}>
+                  {index + 1}
+                </div>
+                
+                <div style={{
+                  fontSize: '2rem',
+                  marginBottom: '12px',
+                }}>
+                  {item.icon}
+                </div>
+                
+                <div style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  color: '#333',
+                  marginBottom: '4px',
+                }}>
+                  {item.name}
+                </div>
+                
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: '#888',
+                  marginBottom: '12px',
+                }}>
+                  {item.nameEn}
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                  <span style={{
+                    background: item.color,
+                    color: 'white',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '500',
+                  }}>
+                    {item.category}
+                  </span>
+                  <span style={{
+                    fontSize: '1.3rem',
+                    fontWeight: '700',
+                    color: item.color,
+                  }}>
+                    HKD ${item.amount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '24px',
+        }}>
+          {/* Categories */}
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '28px',
+            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
+            border: '1px solid rgba(212, 80, 122, 0.1)',
+          }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              color: '#D4507A',
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              📦 主要支出類別與重點商戶
+            </h2>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '16px',
+              }}>
+                <span style={{
+                  fontSize: '1.5rem',
+                  background: 'linear-gradient(135deg, #FF6B9D 0%, #D4507A 100%)',
+                  borderRadius: '12px',
+                  width: '48px',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  🛍️
+                </span>
+                <div>
+                  <div style={{ fontWeight: '600', color: '#333' }}>藥妝與百貨購物佔據支出大宗</div>
+                  <div style={{ fontSize: '0.85rem', color: '#888' }}>以藥妝、百貨購物為最大支出</div>
+                </div>
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}>
+                <span style={{
+                  fontSize: '1.5rem',
+                  background: 'linear-gradient(135deg, #FFB347 0%, #FF9500 100%)',
+                  borderRadius: '12px',
+                  width: '48px',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  🍽️
+                </span>
+                <div>
+                  <div style={{ fontWeight: '600', color: '#333' }}>多元化餐飲體驗</div>
+                  <div style={{ fontSize: '0.85rem', color: '#888' }}>包含高階餐飲與日常連鎖店的多元化餐飲</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}>
+              {['百貨', '超市', '便利店', '藥局', '連鎖快餐'].map((tag, i) => (
+                <span key={i} style={{
+                  background: '#f5f5f5',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  color: '#666',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Locations */}
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '28px',
+            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.1)',
+            border: '1px solid rgba(212, 80, 122, 0.1)',
+          }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              color: '#D4507A',
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              📍 跨區域消費足跡
+            </h2>
+            <p style={{
+              fontSize: '0.85rem',
+              color: '#888',
+              margin: '0 0 20px 0',
+            }}>
+              足跡遍及澀谷、銀座、池袋及木更津 Outlet
+            </p>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '12px',
+            }}>
+              {locations.map((loc, i) => (
+                <div key={i} style={{
+                  background: 'linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{loc.icon}</div>
+                  <div style={{ fontWeight: '600', color: '#333' }}>{loc.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Total Summary */}
+          <div style={{
+            background: 'linear-gradient(135deg, #D4507A 0%, #FF6B9D 100%)',
+            borderRadius: '20px',
+            padding: '28px',
+            color: 'white',
+            boxShadow: '0 4px 20px rgba(212, 80, 122, 0.3)',
+          }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              💰 消費總覽
+            </h2>
+            
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.15)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}>
+                <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '4px' }}>總消費金額</div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700' }}>HKD $4,713</div>
+                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>≈ ¥95,396 JPY</div>
+              </div>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '12px',
+              }}>
+                <div style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>22</div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>交易筆數</div>
+                </div>
+                <div style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>4天</div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>旅行天數</div>
+                </div>
+              </div>
+              
+              <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '10px',
+                padding: '12px',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: '700' }}>$1,178</div>
+                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>平均每日消費</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          marginTop: '32px',
+          padding: '20px',
+          color: '#999',
+          fontSize: '0.85rem',
+        }}>
+          <p style={{ margin: 0 }}>
+            🌸 資料來源：八達通銀包 PayPay 交易紀錄 | 製作日期：2026年1月 | 所有金額以港幣 (HKD) 顯示
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
